@@ -24,6 +24,8 @@ interface EntryFormProps {
   }) => void;
 }
 
+const API_BASE_URL = 'http://localhost:8080/api';
+
 const EntryForm: React.FC<EntryFormProps> = ({ onSave }) => {
   const [entryText, setEntryText] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
@@ -65,7 +67,7 @@ const EntryForm: React.FC<EntryFormProps> = ({ onSave }) => {
     }, 1000);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!entryText.trim() || !analysis) {
       toast({
         title: "Cannot save entry",
@@ -77,16 +79,37 @@ const EntryForm: React.FC<EntryFormProps> = ({ onSave }) => {
 
     setSaving(true);
     
-    // Simulate saving delay
-    setTimeout(() => {
-      const newEntry = {
-        id: Date.now().toString(),
-        text: entryText,
-        date: new Date(),
-        analysis: analysis
+    try {
+      const response = await fetch(`${API_BASE_URL}/journal`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: entryText,
+          analysis: {
+            primaryEmotion: analysis.primaryEmotion,
+            summary: analysis.summary,
+            scores: analysis.scores
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to save entry');
+      }
+      
+      const savedEntry = await response.json();
+      
+      // Transform backend response to match expected format
+      const formattedEntry = {
+        id: savedEntry.id.toString(),
+        text: savedEntry.text,
+        date: new Date(savedEntry.date),
+        analysis: savedEntry.analysis
       };
       
-      onSave(newEntry);
+      onSave(formattedEntry);
       
       toast({
         title: "Entry saved",
@@ -96,13 +119,21 @@ const EntryForm: React.FC<EntryFormProps> = ({ onSave }) => {
       // Reset form
       setEntryText('');
       setAnalysis(null);
-      setSaving(false);
       
       // Focus back on textarea
       if (textareaRef.current) {
         textareaRef.current.focus();
       }
-    }, 800);
+    } catch (error) {
+      toast({
+        title: "Error saving entry",
+        description: "There was a problem saving your journal entry.",
+        variant: "destructive",
+      });
+      console.error('Error saving entry:', error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (

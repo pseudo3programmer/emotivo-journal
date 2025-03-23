@@ -9,14 +9,12 @@ const Index = () => {
 
   // Handle saving entries
   const handleSaveEntry = (entry: any) => {
-    // Get existing entries from localStorage
-    const existingEntries = JSON.parse(localStorage.getItem('diaryEntries') || '[]');
-    
-    // Add new entry to the beginning of the array
-    const updatedEntries = [entry, ...existingEntries];
-    
-    // Save back to localStorage
-    localStorage.setItem('diaryEntries', JSON.stringify(updatedEntries));
+    // We don't need to save to localStorage anymore since the entry is saved to the backend
+    // Just display a success toast
+    toast({
+      title: "Entry saved successfully",
+      description: "Your journal entry has been saved to the database.",
+    });
   };
 
   // Welcome toast on first visit

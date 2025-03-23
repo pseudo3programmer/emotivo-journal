@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import EntryCard from '@/components/EntryCard';
 import NavigationBar from '@/components/NavigationBar';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Search, Calendar, Filter } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 interface DiaryEntry {
   id: string;
@@ -21,55 +21,133 @@ interface DiaryEntry {
   };
 }
 
+const API_BASE_URL = 'http://localhost:8080/api';
+
 const Timeline = () => {
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredEntries, setFilteredEntries] = useState<DiaryEntry[]>([]);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  // Load entries from localStorage
+  // Load entries from backend
   useEffect(() => {
-    const savedEntries = JSON.parse(localStorage.getItem('diaryEntries') || '[]');
-    
-    // Convert date strings to Date objects
-    const formattedEntries = savedEntries.map((entry: DiaryEntry) => ({
-      ...entry,
-      date: new Date(entry.date)
-    }));
-    
-    setEntries(formattedEntries);
-    setFilteredEntries(formattedEntries);
+    fetchEntries();
   }, []);
 
-  // Filter entries based on search query and emotion filter
-  useEffect(() => {
-    let filtered = entries;
-    
-    // Apply search filter
-    if (searchQuery) {
-      filtered = filtered.filter(entry => 
-        entry.text.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+  const fetchEntries = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/journal`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch entries');
+      }
+      
+      const data = await response.json();
+      
+      // Convert date strings to Date objects
+      const formattedEntries = data.map((entry: any) => ({
+        ...entry,
+        id: entry.id.toString(),
+        date: new Date(entry.date)
+      }));
+      
+      setEntries(formattedEntries);
+      setFilteredEntries(formattedEntries);
+    } catch (error) {
+      console.error('Error fetching entries:', error);
+      toast({
+        title: "Error loading entries",
+        description: "There was a problem loading your journal entries.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Search entries from backend
+  const searchEntries = async (query: string) => {
+    if (!query.trim()) {
+      setFilteredEntries(entries);
+      return;
     }
     
-    // Apply emotion filter
-    if (activeFilter) {
-      filtered = filtered.filter(entry => 
-        entry.analysis.primaryEmotion.toLowerCase() === activeFilter.toLowerCase()
-      );
+    try {
+      const response = await fetch(`${API_BASE_URL}/journal/search?query=${encodeURIComponent(query)}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to search entries');
+      }
+      
+      const data = await response.json();
+      
+      // Convert date strings to Date objects
+      const formattedEntries = data.map((entry: any) => ({
+        ...entry,
+        id: entry.id.toString(),
+        date: new Date(entry.date)
+      }));
+      
+      setFilteredEntries(formattedEntries);
+    } catch (error) {
+      console.error('Error searching entries:', error);
+      toast({
+        title: "Error searching entries",
+        description: "There was a problem searching your journal entries.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Filter entries by emotion from backend
+  const filterByEmotion = async (emotion: string | null) => {
+    if (!emotion) {
+      setFilteredEntries(entries);
+      return;
     }
     
-    setFilteredEntries(filtered);
-  }, [searchQuery, activeFilter, entries]);
+    try {
+      const response = await fetch(`${API_BASE_URL}/journal/emotion/${emotion}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to filter entries');
+      }
+      
+      const data = await response.json();
+      
+      // Convert date strings to Date objects
+      const formattedEntries = data.map((entry: any) => ({
+        ...entry,
+        id: entry.id.toString(),
+        date: new Date(entry.date)
+      }));
+      
+      setFilteredEntries(formattedEntries);
+    } catch (error) {
+      console.error('Error filtering entries:', error);
+      toast({
+        title: "Error filtering entries",
+        description: "There was a problem filtering your journal entries.",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Handle search input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+    const query = e.target.value;
+    setSearchQuery(query);
+    searchEntries(query);
   };
 
   // Handle emotion filter
   const handleFilterClick = (emotion: string) => {
-    setActiveFilter(activeFilter === emotion ? null : emotion);
+    const newFilter = activeFilter === emotion ? null : emotion;
+    setActiveFilter(newFilter);
+    filterByEmotion(newFilter);
   };
 
   // Available emotions for filtering

@@ -8,35 +8,67 @@ import { useToast } from '@/components/ui/use-toast';
 import NavigationBar from '@/components/NavigationBar';
 import { Settings as SettingsIcon, Trash2, Download, Upload, Moon, Sun, Bell } from 'lucide-react';
 
+const API_BASE_URL = 'http://localhost:8080/api';
+
 const Settings = () => {
   const { toast } = useToast();
   
-  const handleClearData = () => {
+  const handleClearData = async () => {
     if (confirm("Are you sure you want to delete all your journal entries? This action cannot be undone.")) {
-      localStorage.removeItem('diaryEntries');
-      toast({
-        title: "Data cleared",
-        description: "All journal entries have been deleted.",
-      });
+      try {
+        // Get all entries
+        const response = await fetch(`${API_BASE_URL}/journal`);
+        const entries = await response.json();
+        
+        // Delete each entry individually
+        for (const entry of entries) {
+          await fetch(`${API_BASE_URL}/journal/${entry.id}`, {
+            method: 'DELETE'
+          });
+        }
+        
+        toast({
+          title: "Data cleared",
+          description: "All journal entries have been deleted.",
+        });
+      } catch (error) {
+        console.error('Error clearing data:', error);
+        toast({
+          title: "Error clearing data",
+          description: "There was a problem deleting your journal entries.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
-  const handleExportData = () => {
-    const entries = localStorage.getItem('diaryEntries') || '[]';
-    const blob = new Blob([entries], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `emotivo-journal-export-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    toast({
-      title: "Data exported",
-      description: "Your journal data has been exported.",
-    });
+  const handleExportData = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/journal`);
+      const entries = await response.json();
+      
+      const blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `emotivo-journal-export-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Data exported",
+        description: "Your journal data has been exported.",
+      });
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      toast({
+        title: "Error exporting data",
+        description: "There was a problem exporting your journal entries.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
