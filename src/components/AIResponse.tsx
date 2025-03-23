@@ -14,9 +14,9 @@ const AIResponse: React.FC<AIResponseProps> = ({ response, isLoading }) => {
       <CardHeader className="pb-2">
         <div className="flex items-center">
           <Bot className="mr-2 h-5 w-5 text-primary" />
-          <CardTitle className="text-xl font-medium">AI Reflection</CardTitle>
+          <CardTitle className="text-xl font-medium">Your Journal Companion</CardTitle>
         </div>
-        <CardDescription>Your personal diary assistant</CardDescription>
+        <CardDescription>Reflecting on your thoughts with you</CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading ? (

@@ -8,42 +8,42 @@ interface EmotionResponse {
 
 const emotionResponses: EmotionResponse = {
   joy: [
-    "I'm happy to see you're feeling joyful! What made you feel this way?",
-    "It's wonderful to see such positive emotions in your entry. What contributed to this joy?",
-    "Joy is such a beautiful emotion to experience. How can you carry this feeling forward?"
+    "I'm so glad to see you're feeling happy today! What sparked this joy for you?",
+    "Your happiness shines through in your words. Those moments are worth treasuring, aren't they?",
+    "It's lovely to see you in such good spirits! What's been bringing a smile to your face?"
   ],
   sadness: [
-    "I notice you're feeling sad. Remember that it's okay to feel this way, and emotions are temporary.",
-    "I'm sorry you're experiencing sadness. Is there something specific that triggered this feeling?",
-    "When we feel sad, it can help to focus on small acts of self-care. What might help you feel a bit better today?"
+    "I hear you're feeling down today. Sometimes it helps just to acknowledge those feelings and be gentle with yourself.",
+    "It sounds like today has been tough. Remember that all emotions, even the difficult ones, are temporary visitors.",
+    "I'm really sorry you're feeling sad. Would talking to someone close to you help lighten the weight a bit?"
   ],
   anger: [
-    "I can sense frustration in your entry. Taking deep breaths might help you process this anger.",
-    "Anger often signals that a boundary has been crossed. Is there a way to address what upset you?",
-    "When we're angry, it's important to express it in healthy ways. Have you tried journaling specifically about what made you angry?"
+    "I can tell you're pretty frustrated right now. Take a deep breath - it's okay to feel this way.",
+    "Sounds like something really pushed your buttons. Sometimes anger is telling us an important boundary has been crossed.",
+    "When I'm as annoyed as you seem to be, I find it helps to channel that energy into something physical - even just a quick walk can help."
   ],
   fear: [
-    "I notice feelings of fear in your entry. Remember that courage isn't the absence of fear, but moving forward despite it.",
-    "Fear is a natural response to uncertainty. What small step could you take to address what's concerning you?",
-    "It's okay to feel afraid sometimes. Would talking to someone you trust about this fear help you?"
+    "It's natural to feel anxious about this. Your concerns are valid, and acknowledging them is an important step.",
+    "I can sense you're worried. Sometimes putting those fears into words like you've done helps take away some of their power.",
+    "Those anxious feelings can be overwhelming, can't they? Remember that you've faced difficult situations before and made it through."
   ],
   surprise: [
-    "Life is full of unexpected moments! How has this surprise changed your perspective?",
-    "Surprises keep life interesting, don't they? How are you adapting to this unexpected development?",
-    "I notice you were surprised. Sometimes the unexpected can lead to new opportunities. What possibilities do you see?"
+    "Wow, that was unexpected! Life has a way of throwing curveballs when we least expect them, doesn't it?",
+    "Sometimes the unexpected things lead to the best stories later. How are you processing this surprise?",
+    "That must have caught you off guard! Are you seeing any silver linings in this unexpected turn of events?"
   ],
   neutral: [
-    "I notice a sense of calm in your entry today. How are you maintaining this balanced state?",
-    "Sometimes neutral emotions give us space to reflect. Is there anything you're contemplating right now?",
-    "A neutral state can be a good time for planning and thinking clearly. Is there something you'd like to focus your energy on?"
+    "Seems like today is flowing along at its own pace. Sometimes those ordinary days are worth appreciating too.",
+    "I notice you're in a pretty balanced headspace today. Those moments of calm can be refreshing, right?",
+    "Today feels like a steady day from your writing. Any small wins or moments worth celebrating that might have gone unnoticed?"
   ]
 };
 
 const generalResponses = [
-  "Thank you for sharing your thoughts with me today. How else can I support you?",
-  "I appreciate your openness in this entry. Is there anything specific you'd like to explore further?",
-  "Writing regularly can help process emotions. What patterns have you noticed in your journaling?",
-  "Your self-reflection shows great emotional awareness. What have you learned about yourself from this entry?"
+  "I'm here anytime you want to work through your thoughts. What else is on your mind today?",
+  "Thanks for sharing that with me. It takes courage to put your feelings into words sometimes.",
+  "I've noticed you've been journaling regularly - that's a great habit for emotional well-being!",
+  "Writing things down can help you spot patterns in how you're feeling. Have you noticed any recurring themes lately?"
 ];
 
 export function generateAIResponse(text: string, primaryEmotion: string): Promise<string> {
