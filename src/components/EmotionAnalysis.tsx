@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Bar } from 'recharts';
-import { BarChart } from '@/components/ui/chart';
+import { ChartContainer } from '@/components/ui/chart';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface EmotionAnalysisProps {
@@ -52,13 +52,19 @@ const EmotionAnalysis: React.FC<EmotionAnalysisProps> = ({ primaryEmotion, score
         </div>
         
         <div className="h-48 mt-6">
-          <BarChart data={chartData}>
+          <ChartContainer
+            config={{}}
+            className="w-full"
+          >
             <Bar
+              data={chartData}
               dataKey="value"
+              nameKey="emotion"
+              fill="var(--color-primary)"
               radius={[4, 4, 0, 0]}
-              className="fill-current"
+              isAnimationActive={true}
             />
-          </BarChart>
+          </ChartContainer>
         </div>
       </CardContent>
     </Card>
