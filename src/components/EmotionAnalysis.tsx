@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { Bar } from 'recharts';
-import { ChartContainer } from '@/components/ui/chart';
+import { Bar, BarChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface EmotionAnalysisProps {
@@ -52,19 +51,19 @@ const EmotionAnalysis: React.FC<EmotionAnalysisProps> = ({ primaryEmotion, score
         </div>
         
         <div className="h-48 mt-6">
-          <ChartContainer
-            config={{}}
-            className="w-full"
-          >
-            <Bar
-              data={chartData}
-              dataKey="value"
-              nameKey="emotion"
-              fill="var(--color-primary)"
-              radius={[4, 4, 0, 0]}
-              isAnimationActive={true}
-            />
-          </ChartContainer>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData}>
+              <XAxis dataKey="emotion" />
+              <YAxis hide />
+              <Tooltip />
+              <Bar
+                dataKey="value"
+                fill="var(--color-primary)"
+                radius={[4, 4, 0, 0]}
+                isAnimationActive={true}
+              />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </CardContent>
     </Card>
