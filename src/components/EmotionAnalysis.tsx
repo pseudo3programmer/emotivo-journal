@@ -1,0 +1,68 @@
+
+import React from 'react';
+import { Bar } from 'recharts';
+import { BarChart } from '@/components/ui/chart';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
+interface EmotionAnalysisProps {
+  primaryEmotion: string;
+  scores: Array<{
+    emotion: string;
+    score: number;
+  }>;
+  summary: string;
+}
+
+const EmotionAnalysis: React.FC<EmotionAnalysisProps> = ({ primaryEmotion, scores, summary }) => {
+  // Map emotion names to colors
+  const emotionColors: Record<string, string> = {
+    joy: '#FFD166',
+    sadness: '#118AB2',
+    anger: '#EF476F',
+    fear: '#073B4C',
+    surprise: '#06D6A0',
+    neutral: '#8A8A8A'
+  };
+
+  // Prepare data for chart
+  const chartData = scores.map(item => ({
+    emotion: item.emotion.charAt(0).toUpperCase() + item.emotion.slice(1),
+    value: item.score * 100,
+    fill: emotionColors[item.emotion]
+  }));
+
+  return (
+    <Card className="animate-scale-in glass-card">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-xl font-medium">Emotion Analysis</CardTitle>
+        <CardDescription>{summary}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="rounded-lg bg-secondary/50 p-4 mb-4">
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Dominant Emotion</p>
+            <div className="flex items-center">
+              <span 
+                className={`emotion-dot emotion-dot-${primaryEmotion.toLowerCase()}`} 
+                aria-hidden="true"
+              />
+              <span className="text-lg font-semibold capitalize">{primaryEmotion}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="h-48 mt-6">
+          <BarChart data={chartData}>
+            <Bar
+              dataKey="value"
+              radius={[4, 4, 0, 0]}
+              className="fill-current"
+            />
+          </BarChart>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default EmotionAnalysis;
