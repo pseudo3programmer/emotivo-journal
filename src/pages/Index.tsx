@@ -25,7 +25,7 @@ const Index = () => {
       setTimeout(() => {
         toast({
           title: "Welcome to Emotivo Journal",
-          description: "Express yourself and understand your emotions better.",
+          description: "Express yourself, understand your emotions, and get AI-powered reflections on your entries.",
         });
         localStorage.setItem('hasVisitedEmotivoJournal', 'true');
       }, 1000);
@@ -36,7 +36,7 @@ const Index = () => {
     <div className="min-h-screen w-full pb-24 flex flex-col items-center bg-gradient-to-b from-background to-background/95">
       <header className="w-full py-6 text-center animate-slide-down">
         <h1 className="text-3xl font-light tracking-tight">Emotivo Journal</h1>
-        <p className="text-muted-foreground mt-1">Capture moments, understand emotions</p>
+        <p className="text-muted-foreground mt-1">Capture moments, understand emotions, receive AI insights</p>
       </header>
       
       <main className="flex-1 w-full max-w-lg mx-auto px-4 py-8">

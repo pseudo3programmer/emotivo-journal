@@ -4,7 +4,9 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { analyzeEmotion } from '@/utils/emotionAnalyzer';
+import { generateAIResponse } from '@/utils/aiResponseService';
 import EmotionAnalysis from './EmotionAnalysis';
+import AIResponse from './AIResponse';
 import { useToast } from '@/components/ui/use-toast';
 import { CalendarIcon, BookMarked } from 'lucide-react';
 
@@ -31,6 +33,8 @@ const EntryForm: React.FC<EntryFormProps> = ({ onSave }) => {
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<ReturnType<typeof analyzeEmotion> | null>(null);
   const [saving, setSaving] = useState(false);
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [loadingAiResponse, setLoadingAiResponse] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
 
@@ -43,11 +47,14 @@ const EntryForm: React.FC<EntryFormProps> = ({ onSave }) => {
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setEntryText(e.target.value);
-    // Clear analysis when text changes
-    if (analysis) setAnalysis(null);
+    // Clear analysis and AI response when text changes
+    if (analysis) {
+      setAnalysis(null);
+      setAiResponse(null);
+    }
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     if (!entryText.trim()) {
       toast({
         title: "Entry is empty",
@@ -58,12 +65,29 @@ const EntryForm: React.FC<EntryFormProps> = ({ onSave }) => {
     }
 
     setAnalyzing(true);
+    setAiResponse(null);
     
     // Simulate API delay
-    setTimeout(() => {
+    setTimeout(async () => {
       const result = analyzeEmotion(entryText);
       setAnalysis(result);
       setAnalyzing(false);
+      
+      // Generate AI response after emotion analysis
+      setLoadingAiResponse(true);
+      try {
+        const response = await generateAIResponse(entryText, result.primaryEmotion);
+        setAiResponse(response);
+      } catch (error) {
+        console.error('Error generating AI response:', error);
+        toast({
+          title: "Error generating response",
+          description: "There was a problem getting AI feedback on your entry.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoadingAiResponse(false);
+      }
     }, 1000);
   };
 
@@ -119,6 +143,7 @@ const EntryForm: React.FC<EntryFormProps> = ({ onSave }) => {
       // Reset form
       setEntryText('');
       setAnalysis(null);
+      setAiResponse(null);
       
       // Focus back on textarea
       if (textareaRef.current) {
@@ -168,15 +193,15 @@ const EntryForm: React.FC<EntryFormProps> = ({ onSave }) => {
             <Button 
               variant="outline" 
               onClick={handleAnalyze} 
-              disabled={!entryText.trim() || analyzing}
+              disabled={!entryText.trim() || analyzing || loadingAiResponse}
               className="w-full transition-all duration-300"
             >
-              {analyzing ? "Analyzing..." : "Analyze Emotions"}
+              {analyzing ? "Analyzing..." : "Analyze & Get Feedback"}
             </Button>
             
             <Button 
               onClick={handleSave} 
-              disabled={!analysis || saving}
+              disabled={!analysis || saving || loadingAiResponse}
               className="w-full bg-accent hover:bg-accent/90 transition-all duration-300"
             >
               {saving ? "Saving..." : "Save Entry"}
@@ -184,6 +209,20 @@ const EntryForm: React.FC<EntryFormProps> = ({ onSave }) => {
           </div>
         </div>
       </Card>
+
+      {aiResponse && analysis && (
+        <AIResponse
+          response={aiResponse}
+          isLoading={loadingAiResponse}
+        />
+      )}
+
+      {loadingAiResponse && !aiResponse && analysis && (
+        <AIResponse
+          response=""
+          isLoading={true}
+        />
+      )}
 
       {analysis && (
         <EmotionAnalysis
