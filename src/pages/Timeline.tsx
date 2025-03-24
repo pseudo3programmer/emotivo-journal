@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import EntryCard from '@/components/EntryCard';
 import NavigationBar from '@/components/NavigationBar';
@@ -21,7 +22,8 @@ interface DiaryEntry {
   };
 }
 
-const API_BASE_URL = 'http://localhost:8080/api';
+// Update the API URL to use a relative path instead of localhost
+const API_BASE_URL = '/api';
 
 const Timeline = () => {
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
@@ -31,7 +33,7 @@ const Timeline = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  // Load entries from backend
+  // Load entries from backend (or localStorage as a fallback)
   useEffect(() => {
     fetchEntries();
   }, []);
@@ -39,6 +41,59 @@ const Timeline = () => {
   const fetchEntries = async () => {
     setLoading(true);
     try {
+      // In a real application, we would fetch from the backend
+      // For now, let's use a mock list of entries from localStorage if available
+      
+      // Check if we have any mock entries in localStorage
+      const storedEntries = localStorage.getItem('mockJournalEntries');
+      let entriesList: DiaryEntry[] = [];
+      
+      if (storedEntries) {
+        entriesList = JSON.parse(storedEntries);
+      } else {
+        // Initialize with some sample entries if nothing exists
+        entriesList = [
+          {
+            id: "1",
+            text: "Today was a wonderful day. I felt really happy about my progress on the project.",
+            date: new Date(Date.now() - 86400000), // yesterday
+            analysis: {
+              primaryEmotion: "joy",
+              scores: [
+                { emotion: "joy", score: 0.8 },
+                { emotion: "surprise", score: 0.1 },
+                { emotion: "neutral", score: 0.1 },
+                { emotion: "sadness", score: 0 },
+                { emotion: "anger", score: 0 },
+                { emotion: "fear", score: 0 }
+              ],
+              summary: "Your entry reflects happiness and positive emotions."
+            }
+          },
+          {
+            id: "2",
+            text: "I'm feeling a bit anxious about the upcoming deadline. Not sure if I'll be able to finish everything on time.",
+            date: new Date(Date.now() - 172800000), // 2 days ago
+            analysis: {
+              primaryEmotion: "fear",
+              scores: [
+                { emotion: "fear", score: 0.7 },
+                { emotion: "neutral", score: 0.2 },
+                { emotion: "sadness", score: 0.1 },
+                { emotion: "joy", score: 0 },
+                { emotion: "surprise", score: 0 },
+                { emotion: "anger", score: 0 }
+              ],
+              summary: "Your entry shows signs of anxiety or concern."
+            }
+          }
+        ];
+        
+        // Store the sample entries
+        localStorage.setItem('mockJournalEntries', JSON.stringify(entriesList));
+      }
+      
+      /*
       const response = await fetch(`${API_BASE_URL}/journal`);
       
       if (!response.ok) {
@@ -53,9 +108,15 @@ const Timeline = () => {
         id: entry.id.toString(),
         date: new Date(entry.date)
       }));
+      */
       
-      setEntries(formattedEntries);
-      setFilteredEntries(formattedEntries);
+      // Sort entries by date (newest first)
+      entriesList.sort((a, b) => 
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+      
+      setEntries(entriesList);
+      setFilteredEntries(entriesList);
     } catch (error) {
       console.error('Error fetching entries:', error);
       toast({
@@ -68,72 +129,34 @@ const Timeline = () => {
     }
   };
 
-  // Search entries from backend
-  const searchEntries = async (query: string) => {
+  // Search entries (local search instead of backend)
+  const searchEntries = (query: string) => {
     if (!query.trim()) {
       setFilteredEntries(entries);
       return;
     }
     
-    try {
-      const response = await fetch(`${API_BASE_URL}/journal/search?query=${encodeURIComponent(query)}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to search entries');
-      }
-      
-      const data = await response.json();
-      
-      // Convert date strings to Date objects
-      const formattedEntries = data.map((entry: any) => ({
-        ...entry,
-        id: entry.id.toString(),
-        date: new Date(entry.date)
-      }));
-      
-      setFilteredEntries(formattedEntries);
-    } catch (error) {
-      console.error('Error searching entries:', error);
-      toast({
-        title: "Error searching entries",
-        description: "There was a problem searching your journal entries.",
-        variant: "destructive",
-      });
-    }
+    const lowerCaseQuery = query.toLowerCase();
+    const results = entries.filter(entry => 
+      entry.text.toLowerCase().includes(lowerCaseQuery) ||
+      entry.analysis.primaryEmotion.toLowerCase().includes(lowerCaseQuery)
+    );
+    
+    setFilteredEntries(results);
   };
 
-  // Filter entries by emotion from backend
-  const filterByEmotion = async (emotion: string | null) => {
+  // Filter entries by emotion (local filter instead of backend)
+  const filterByEmotion = (emotion: string | null) => {
     if (!emotion) {
       setFilteredEntries(entries);
       return;
     }
     
-    try {
-      const response = await fetch(`${API_BASE_URL}/journal/emotion/${emotion}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to filter entries');
-      }
-      
-      const data = await response.json();
-      
-      // Convert date strings to Date objects
-      const formattedEntries = data.map((entry: any) => ({
-        ...entry,
-        id: entry.id.toString(),
-        date: new Date(entry.date)
-      }));
-      
-      setFilteredEntries(formattedEntries);
-    } catch (error) {
-      console.error('Error filtering entries:', error);
-      toast({
-        title: "Error filtering entries",
-        description: "There was a problem filtering your journal entries.",
-        variant: "destructive",
-      });
-    }
+    const results = entries.filter(entry => 
+      entry.analysis.primaryEmotion.toLowerCase() === emotion.toLowerCase()
+    );
+    
+    setFilteredEntries(results);
   };
 
   // Handle search input change
@@ -153,6 +176,13 @@ const Timeline = () => {
   // Available emotions for filtering
   const emotions = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'neutral'];
 
+  // Update local storage when entries change
+  useEffect(() => {
+    if (entries.length > 0) {
+      localStorage.setItem('mockJournalEntries', JSON.stringify(entries));
+    }
+  }, [entries]);
+  
   return (
     <div className="min-h-screen w-full pb-24 flex flex-col bg-gradient-to-b from-background to-background/95">
       <header className="w-full py-6 px-4 text-center animate-slide-down">

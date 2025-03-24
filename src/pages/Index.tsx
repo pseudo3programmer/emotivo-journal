@@ -7,9 +7,24 @@ import { useToast } from '@/components/ui/use-toast';
 const Index = () => {
   const { toast } = useToast();
 
-  // Handle saving entries
+  // Handle saving entries (also save to localStorage for persistence)
   const handleSaveEntry = (entry: any) => {
     console.log('Entry saved successfully:', entry);
+    
+    // Save to localStorage for persistence
+    const existingEntries = localStorage.getItem('mockJournalEntries');
+    let entries = [];
+    
+    if (existingEntries) {
+      entries = JSON.parse(existingEntries);
+    }
+    
+    // Add the new entry to the array
+    entries.push(entry);
+    
+    // Save back to localStorage
+    localStorage.setItem('mockJournalEntries', JSON.stringify(entries));
+    
     // Show success toast
     toast({
       title: "Entry saved successfully",
