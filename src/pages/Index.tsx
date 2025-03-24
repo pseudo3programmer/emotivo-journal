@@ -19,8 +19,15 @@ const Index = () => {
       entries = JSON.parse(existingEntries);
     }
     
+    // Ensure date is stored properly
+    const entryWithProperDate = {
+      ...entry,
+      // This will ensure the date is stored as a string that can be parsed back
+      date: entry.date instanceof Date ? entry.date.toISOString() : entry.date
+    };
+    
     // Add the new entry to the array
-    entries.push(entry);
+    entries.push(entryWithProperDate);
     
     // Save back to localStorage
     localStorage.setItem('mockJournalEntries', JSON.stringify(entries));

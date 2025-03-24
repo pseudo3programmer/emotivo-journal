@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 interface EntryCardProps {
   id: string;
   text: string;
-  date: Date;
+  date: Date | string;
   analysis: {
     primaryEmotion: string;
     scores: Array<{
@@ -22,8 +22,11 @@ interface EntryCardProps {
 const EntryCard: React.FC<EntryCardProps> = ({ text, date, analysis }) => {
   const [expanded, setExpanded] = useState(false);
   
+  // Ensure date is a Date object
+  const dateObject = date instanceof Date ? date : new Date(date);
+  
   // Format date
-  const formattedDate = date.toLocaleDateString('en-US', {
+  const formattedDate = dateObject.toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric', 
     month: 'long', 
@@ -31,7 +34,7 @@ const EntryCard: React.FC<EntryCardProps> = ({ text, date, analysis }) => {
   });
   
   // Format time
-  const formattedTime = date.toLocaleTimeString('en-US', {
+  const formattedTime = dateObject.toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit'
   });

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import EntryCard from '@/components/EntryCard';
 import NavigationBar from '@/components/NavigationBar';
@@ -49,7 +48,12 @@ const Timeline = () => {
       let entriesList: DiaryEntry[] = [];
       
       if (storedEntries) {
-        entriesList = JSON.parse(storedEntries);
+        // Parse entries and ensure dates are proper Date objects
+        const parsedEntries = JSON.parse(storedEntries);
+        
+        // We don't modify the entries here to avoid date conversion issues
+        // The EntryCard component will handle string or Date objects
+        entriesList = parsedEntries;
       } else {
         // Initialize with some sample entries if nothing exists
         entriesList = [
@@ -93,27 +97,12 @@ const Timeline = () => {
         localStorage.setItem('mockJournalEntries', JSON.stringify(entriesList));
       }
       
-      /*
-      const response = await fetch(`${API_BASE_URL}/journal`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch entries');
-      }
-      
-      const data = await response.json();
-      
-      // Convert date strings to Date objects
-      const formattedEntries = data.map((entry: any) => ({
-        ...entry,
-        id: entry.id.toString(),
-        date: new Date(entry.date)
-      }));
-      */
-      
       // Sort entries by date (newest first)
-      entriesList.sort((a, b) => 
-        new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
+      entriesList.sort((a, b) => {
+        const dateA = a.date instanceof Date ? a.date : new Date(a.date);
+        const dateB = b.date instanceof Date ? b.date : new Date(b.date);
+        return dateB.getTime() - dateA.getTime();
+      });
       
       setEntries(entriesList);
       setFilteredEntries(entriesList);
