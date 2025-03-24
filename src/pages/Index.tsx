@@ -9,8 +9,8 @@ const Index = () => {
 
   // Handle saving entries
   const handleSaveEntry = (entry: any) => {
-    // We don't need to save to localStorage anymore since the entry is saved to the backend
-    // Just display a success toast
+    console.log('Entry saved successfully:', entry);
+    // Show success toast
     toast({
       title: "Entry saved successfully",
       description: "Your journal entry has been saved to the database.",

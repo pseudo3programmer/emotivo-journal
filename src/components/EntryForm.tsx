@@ -104,33 +104,49 @@ const EntryForm: React.FC<EntryFormProps> = ({ onSave }) => {
     setSaving(true);
     
     try {
+      console.log('Saving entry with analysis:', analysis);
+      
+      const entryData = {
+        text: entryText,
+        analysis: {
+          primaryEmotion: analysis.primaryEmotion,
+          summary: analysis.summary,
+          scores: analysis.scores.map(score => ({
+            emotion: score.emotion,
+            score: score.score
+          }))
+        }
+      };
+      
+      console.log('Entry data being sent:', JSON.stringify(entryData));
+      
       const response = await fetch(`${API_BASE_URL}/journal`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          text: entryText,
-          analysis: {
-            primaryEmotion: analysis.primaryEmotion,
-            summary: analysis.summary,
-            scores: analysis.scores
-          }
-        })
+        body: JSON.stringify(entryData)
       });
       
       if (!response.ok) {
-        throw new Error('Failed to save entry');
+        const errorText = await response.text();
+        console.error('Server response error:', response.status, errorText);
+        throw new Error(`Failed to save entry: ${response.status} ${errorText}`);
       }
       
       const savedEntry = await response.json();
+      console.log('Successfully saved entry:', savedEntry);
       
       // Transform backend response to match expected format
       const formattedEntry = {
         id: savedEntry.id.toString(),
         text: savedEntry.text,
         date: new Date(savedEntry.date),
-        analysis: savedEntry.analysis
+        analysis: {
+          primaryEmotion: savedEntry.analysis.primaryEmotion,
+          scores: savedEntry.analysis.scores,
+          summary: savedEntry.analysis.summary
+        }
       };
       
       onSave(formattedEntry);
@@ -150,12 +166,12 @@ const EntryForm: React.FC<EntryFormProps> = ({ onSave }) => {
         textareaRef.current.focus();
       }
     } catch (error) {
+      console.error('Error saving entry:', error);
       toast({
         title: "Error saving entry",
-        description: "There was a problem saving your journal entry.",
+        description: "There was a problem saving your journal entry. Please try again.",
         variant: "destructive",
       });
-      console.error('Error saving entry:', error);
     } finally {
       setSaving(false);
     }
