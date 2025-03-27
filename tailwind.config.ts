@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,12 +62,19 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				joy: '#FFD166',
-				sadness: '#118AB2',
-				anger: '#EF476F',
-				fear: '#073B4C',
-				surprise: '#06D6A0',
-				neutral: '#8A8A8A'
+				joy: '#FFB770',
+				sadness: '#7AADCB',
+				anger: '#E76F51',
+				fear: '#264653',
+				surprise: '#2A9D8F',
+				neutral: '#888888',
+				artistic: {
+					primary: '#E9C46A',
+					secondary: '#F4A261',
+					accent: '#264653',
+					light: '#f8f0e3',
+					dark: '#2d2a32'
+				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -113,6 +119,14 @@ export default {
 				'scale-in': 'scale-in 0.3s ease-out',
 				'slide-up': 'slide-up 0.3s ease-out',
 				'slide-down': 'slide-down 0.3s ease-out'
+			},
+			fontFamily: {
+				'serif': ['Playfair Display', 'serif'],
+				'sans': ['Inter', 'sans-serif']
+			},
+			backgroundImage: {
+				'artistic-pattern': 'url("/patterns/artistic-bg.png")',
+				'brushstroke': 'url("/patterns/brushstroke.png")'
 			}
 		}
 	},

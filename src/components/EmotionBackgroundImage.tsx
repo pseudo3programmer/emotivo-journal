@@ -17,19 +17,31 @@ const EmotionBackgroundImage: React.FC<EmotionBackgroundImageProps> = ({ emotion
     neutral: '/emotions/neutral.jpg'
   };
 
+  // Define artistic styles for each emotion
+  const emotionStyles: Record<string, string> = {
+    joy: 'after:bg-joy/20',
+    sadness: 'after:bg-sadness/20',
+    anger: 'after:bg-anger/20',
+    fear: 'after:bg-fear/20',
+    surprise: 'after:bg-surprise/20',
+    neutral: 'after:bg-neutral/20'
+  };
+
   // Default to neutral if emotion isn't found
   const imagePath = emotionImages[emotion.toLowerCase()] || emotionImages.neutral;
+  const emotionStyle = emotionStyles[emotion.toLowerCase()] || emotionStyles.neutral;
 
   return (
     <div 
-      className={`absolute inset-0 opacity-10 -z-10 overflow-hidden rounded-lg ${className}`}
+      className={`absolute inset-0 overflow-hidden rounded-lg ${className}`}
     >
+      <div className={`absolute inset-0 -z-10 ${emotionStyle} after:absolute after:inset-0 after:opacity-30`}></div>
       <img 
         src={imagePath} 
         alt={`${emotion} mood background`} 
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover opacity-15 -z-20"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-white/30 to-transparent dark:from-black/30"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-white/40 to-transparent dark:from-black/40 -z-10"></div>
     </div>
   );
 };

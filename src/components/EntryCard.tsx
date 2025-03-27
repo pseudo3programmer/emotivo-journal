@@ -47,21 +47,21 @@ const EntryCard: React.FC<EntryCardProps> = ({ text, date, analysis }) => {
   
   return (
     <Card className={cn(
-      "glass-card mb-4 transition-all duration-300 ease-out overflow-hidden relative",
+      "art-card mb-4 transition-all duration-300 ease-out overflow-hidden relative",
       expanded ? "transform scale-[1.02]" : "",
       "hover:shadow-xl"
     )}>
       {/* Add emotion-based background image */}
       <EmotionBackgroundImage emotion={analysis.primaryEmotion} />
       
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-2 z-10">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <span 
               className={`emotion-dot emotion-dot-${analysis.primaryEmotion.toLowerCase()}`} 
               aria-hidden="true"
             />
-            <span className="font-medium capitalize">{analysis.primaryEmotion}</span>
+            <span className="font-medium capitalize font-serif">{analysis.primaryEmotion}</span>
           </div>
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
             <div className="flex items-center">
@@ -76,14 +76,14 @@ const EntryCard: React.FC<EntryCardProps> = ({ text, date, analysis }) => {
         </div>
       </CardHeader>
       
-      <CardContent>
+      <CardContent className="z-10">
         <p className="text-md leading-relaxed whitespace-pre-line">
           {expanded ? text : truncatedText}
         </p>
       </CardContent>
       
       {text.length > 200 && (
-        <CardFooter className="pt-0">
+        <CardFooter className="pt-0 z-10">
           <Button 
             variant="ghost" 
             size="sm" 
