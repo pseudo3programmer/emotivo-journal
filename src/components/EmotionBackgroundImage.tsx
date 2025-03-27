@@ -7,14 +7,14 @@ interface EmotionBackgroundImageProps {
 }
 
 const EmotionBackgroundImage: React.FC<EmotionBackgroundImageProps> = ({ emotion, className = '' }) => {
-  // Define image paths for each emotion with correct path
+  // Define image paths for each emotion
   const emotionImages: Record<string, string> = {
-    joy: './emotions/joy.jpg',
-    sadness: './emotions/sadness.jpg',
-    anger: './emotions/anger.jpg',
-    fear: './emotions/fear.jpg',
-    surprise: './emotions/surprise.jpg',
-    neutral: './emotions/neutral.jpg'
+    joy: '/emotions/joy.jpg',
+    sadness: '/emotions/sadness.jpg',
+    anger: '/emotions/anger.jpg',
+    fear: '/emotions/fear.jpg',
+    surprise: '/emotions/surprise.jpg',
+    neutral: '/emotions/neutral.jpg'
   };
 
   // Define artistic styles for each emotion
@@ -40,10 +40,6 @@ const EmotionBackgroundImage: React.FC<EmotionBackgroundImageProps> = ({ emotion
         src={imagePath} 
         alt={`${emotion} mood background`} 
         className="w-full h-full object-cover opacity-15 -z-20"
-        onError={(e) => {
-          console.error(`Failed to load image: ${imagePath}`);
-          e.currentTarget.src = './emotions/neutral.jpg';
-        }}
       />
       <div className="absolute inset-0 bg-gradient-to-r from-white/40 to-transparent dark:from-black/40 -z-10"></div>
     </div>

@@ -60,13 +60,9 @@ const Index = () => {
       {/* Hero image section with artistic overlay */}
       <div className="w-full h-60 md:h-72 relative overflow-hidden animate-fade-in">
         <img 
-          src="./journal-hero.jpg" 
+          src="/journal-hero.jpg" 
           alt="Peaceful journal writing scene" 
           className="w-full h-full object-cover opacity-80"
-          onError={(e) => {
-            console.error('Failed to load hero image');
-            e.currentTarget.style.backgroundColor = 'hsl(var(--background))';
-          }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background"></div>
         
