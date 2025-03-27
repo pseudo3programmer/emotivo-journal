@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import EmotionBackgroundImage from './EmotionBackgroundImage';
 
 interface EntryCardProps {
   id: string;
@@ -46,10 +47,13 @@ const EntryCard: React.FC<EntryCardProps> = ({ text, date, analysis }) => {
   
   return (
     <Card className={cn(
-      "glass-card mb-4 transition-all duration-300 ease-out overflow-hidden",
+      "glass-card mb-4 transition-all duration-300 ease-out overflow-hidden relative",
       expanded ? "transform scale-[1.02]" : "",
       "hover:shadow-xl"
     )}>
+      {/* Add emotion-based background image */}
+      <EmotionBackgroundImage emotion={analysis.primaryEmotion} />
+      
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <div className="flex items-center">

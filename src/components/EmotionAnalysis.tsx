@@ -30,11 +30,32 @@ const EmotionAnalysis: React.FC<EmotionAnalysisProps> = ({ primaryEmotion, score
     fill: emotionColors[item.emotion]
   }));
 
+  // Map emotions to illustration images
+  const emotionIllustrations: Record<string, string> = {
+    joy: '/illustrations/joy.svg',
+    sadness: '/illustrations/sadness.svg',
+    anger: '/illustrations/anger.svg',
+    fear: '/illustrations/fear.svg',
+    surprise: '/illustrations/surprise.svg',
+    neutral: '/illustrations/neutral.svg'
+  };
+
+  const illustrationSrc = emotionIllustrations[primaryEmotion.toLowerCase()] || emotionIllustrations.neutral;
+
   return (
     <Card className="animate-scale-in glass-card">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xl font-medium">Emotion Analysis</CardTitle>
-        <CardDescription>{summary}</CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-xl font-medium">Emotion Analysis</CardTitle>
+            <CardDescription>{summary}</CardDescription>
+          </div>
+          <img 
+            src={illustrationSrc}
+            alt={`${primaryEmotion} illustration`}
+            className="h-16 w-16 opacity-80"
+          />
+        </div>
       </CardHeader>
       <CardContent>
         <div className="rounded-lg bg-secondary/50 p-4 mb-4">

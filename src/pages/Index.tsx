@@ -56,12 +56,22 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full pb-24 flex flex-col items-center bg-gradient-to-b from-background to-background/95">
-      <header className="w-full py-6 text-center animate-slide-down">
+      {/* Hero image section */}
+      <div className="w-full h-48 md:h-64 relative overflow-hidden animate-fade-in">
+        <img 
+          src="/journal-hero.jpg" 
+          alt="Peaceful journal writing scene" 
+          className="w-full h-full object-cover opacity-75"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background"></div>
+      </div>
+
+      <header className="w-full py-6 text-center animate-slide-down relative z-10 -mt-16">
         <h1 className="text-3xl font-light tracking-tight">Emotivo Journal</h1>
         <p className="text-muted-foreground mt-1">Capture moments, understand emotions, receive AI insights</p>
       </header>
       
-      <main className="flex-1 w-full max-w-lg mx-auto px-4 py-8">
+      <main className="flex-1 w-full max-w-lg mx-auto px-4 py-8 relative z-10">
         <EntryForm onSave={handleSaveEntry} />
       </main>
       
